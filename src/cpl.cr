@@ -6,11 +6,11 @@ module CPL
 
   class BaseError < Exception
     getter error_no : Int32
-    getter etype : LibCPL::Err
+    getter etype : Lib::Err
     def initialize()
-      @error_no = LibCPL.get_last_error_no()
-      @etype = LibCPL.get_last_error_type()
-      @message = String.new(LibCPL.get_last_error_msg())
+      @error_no = Lib.get_last_error_no()
+      @etype = Lib.get_last_error_type()
+      @message = String.new(Lib.get_last_error_msg())
     end
 
     def initialize(@error_no, @etype, @message); end
@@ -18,25 +18,25 @@ module CPL
 
   {% begin %}
     {% error_map = {
-       LibCPL::E_APPDEFINED => "AppDefinedError",
-       LibCPL::E_OUTOFMEMORY => "OutOfMemoryError",
-       LibCPL::E_FILEIO => "FileIOError",
-       LibCPL::E_OPENFAILED => "OpenFailedError",
-       LibCPL::E_ILLEGALARG => "IllegalArgError",
-       LibCPL::E_NOTSUPPORTED => "NotSupportedError",
-       LibCPL::E_ASSERTIONFAILED => "AssertionFailedError",
-       LibCPL::E_NOWRITEACCESS => "NoWriteAccessError",
-       LibCPL::E_USERINTERRUPT => "UserInterruptError",
-       LibCPL::E_OBJECTNULL => "ObjectNullError",
+       Lib::E_APPDEFINED => "AppDefinedError",
+       Lib::E_OUTOFMEMORY => "OutOfMemoryError",
+       Lib::E_FILEIO => "FileIOError",
+       Lib::E_OPENFAILED => "OpenFailedError",
+       Lib::E_ILLEGALARG => "IllegalArgError",
+       Lib::E_NOTSUPPORTED => "NotSupportedError",
+       Lib::E_ASSERTIONFAILED => "AssertionFailedError",
+       Lib::E_NOWRITEACCESS => "NoWriteAccessError",
+       Lib::E_USERINTERRUPT => "UserInterruptError",
+       Lib::E_OBJECTNULL => "ObjectNullError",
 
        # error numbers 11-16 are introduced in GDAL 2.1. See
        # https://github.com/OSGeo/gdal/pull/98.
-       LibCPL::E_HTTPRESPONSE => "HTTPResponseError",
-       LibCPL::E_AWSBUCKETNOTFOUND => "AWSBucketNotFoundError",
-       LibCPL::E_AWSOBJECTNOTFOUND => "AWSObjectNotFoundError",
-       LibCPL::E_AWSACCESSDENIED => "AWSAccessDeniedError",
-       LibCPL::E_AWSINVALIDCREDENTIALS => "AWSInvalidCredentialsError",
-       LibCPL::E_AWSSIGNATUREDOESNOTMATCH => "AWSSignatureDoesNotMatchError",
+       Lib::E_HTTPRESPONSE => "HTTPResponseError",
+       Lib::E_AWSBUCKETNOTFOUND => "AWSBucketNotFoundError",
+       Lib::E_AWSOBJECTNOTFOUND => "AWSObjectNotFoundError",
+       Lib::E_AWSACCESSDENIED => "AWSAccessDeniedError",
+       Lib::E_AWSINVALIDCREDENTIALS => "AWSInvalidCredentialsError",
+       Lib::E_AWSSIGNATUREDOESNOTMATCH => "AWSSignatureDoesNotMatchError",
      }
      %}
     {% for key, value in error_map %}
@@ -44,17 +44,17 @@ module CPL
     {% end %}
 
   protected def self.map_exception()
-    map_exception(LibCPL.get_last_error_no(), LibCPL.get_last_error_type(),
-                  LibCPL.get_last_error_msg())
+    map_exception(Lib.get_last_error_no(), Lib.get_last_error_type(),
+                  Lib.get_last_error_msg())
   end
 
   protected def self.map_exception(error_no)
-    map_exception(error_no, LibCPL.get_last_error_type(),
-                  LibCPL.get_last_error_msg())
+    map_exception(error_no, Lib.get_last_error_type(),
+                  Lib.get_last_error_msg())
   end
 
-  protected def self.map_exception(error_no : LibCPL::ErrorNum,
-                                   etype : LibCPL::Err,
+  protected def self.map_exception(error_no : Lib::ErrorNum,
+                                   etype : Lib::Err,
                                    msg : LibC::Char*)
     message = if msg.null?
                 "No error message"
@@ -62,8 +62,8 @@ module CPL
                 String.new(msg)
               end
     case etype
-    when LibCPL::Err::CeFailure
-      LibCPL.error_reset()
+    when Lib::Err::CeFailure
+      Lib.error_reset()
       case error_no
       when 0
         raise "called to map exception but error_no == 0"
@@ -74,12 +74,12 @@ module CPL
       else
         raise "Unknown CPL error number: #{error_no}"
       end
-    when LibCPL::Err::CeWarning, LibCPL::Err::CeDebug
+    when Lib::Err::CeWarning, Lib::Err::CeDebug
       raise "CeWarning or CeDebug error (#{message})"
-    when LibCPL::Err::CeFatal
+    when Lib::Err::CeFatal
       raise "CeFatal error (#{message})"
     else
-      raise "the wrapped function returned an error but no error message was set"
+      raise "wrapped function returned an error but no error message was set"
     end
   end
   {% end %}
@@ -89,34 +89,34 @@ module CPL
     ptr
   end
 
-  def exc_wrap_err(err : LibCPL::Err)
-    map_exception(err) if err != LibCPL::Err::CeNone
+  def exc_wrap_err(err : Lib::Err)
+    map_exception(err) if err != Lib::Err::CeNone
     err
   end
 
   
   @@use_exceptions : Bool = false
-  @@prev_error_handler : LibCPL::ErrorHandler?
+  @@prev_error_handler : Lib::ErrorHandler?
 
   def self.use_exceptions(use_exceptions : Bool)
     return if use_exceptions == @@use_exceptions
-    LibCPL.error_reset()
+    Lib.error_reset()
     @@use_exceptions = use_exceptions
     if use_exceptions
-      @@prev_error_handler = LibCPL.set_error_handler ->(etype, code, msg) {
-        if etype == LibCPL::Err::CeFatal
-          prev = @@prev_error_handler.as(LibCPL::ErrorHandler)
+      @@prev_error_handler = Lib.set_error_handler ->(etype, code, msg) {
+        if etype == Lib::Err::CeFatal
+          prev = @@prev_error_handler.as(Lib::ErrorHandler)
           prev.call(etype, code, msg)
-        elsif etype == LibCPL::Err::CeWarning || etype == LibCPL::Err::CeDebug
-          prev = @@prev_error_handler.as(LibCPL::ErrorHandler)
+        elsif etype == Lib::Err::CeWarning || etype == Lib::Err::CeDebug
+          prev = @@prev_error_handler.as(Lib::ErrorHandler)
           prev.call(etype, code, msg)
         else
           map_exception(code, etype, msg)
         end
       }
     else
-      prev = @@prev_error_handler.as(LibCPL::ErrorHandler)
-      LibCPL.set_error_handler(prev)
+      prev = @@prev_error_handler.as(Lib::ErrorHandler)
+      Lib.set_error_handler(prev)
       @@prev_error_handler = nil
     end
   end

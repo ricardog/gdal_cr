@@ -13,22 +13,22 @@ module OGR
   
   {% begin %}
     {% error_map = {
-       LibOGR::ERR_NOT_ENOUGH_DATA => "NotEnoughData",
-       LibOGR::ERR_NOT_ENOUGH_MEMORY => "NotEnoughMemory",
-       LibOGR::ERR_UNSUPPORTED_GEOMETRY_TYPE => "UnsupportedGeometryType",
-       LibOGR::ERR_UNSUPPORTED_OPERATION => "UnsupportedOperation",
-       LibOGR::ERR_CORRUPT_DATA => "CorruptData",
-       LibOGR::ERR_FAILURE => "Failure",
-       LibOGR::ERR_UNSUPPORTED_SRS => "UnsupportedSRS",
-       LibOGR::ERR_INVALID_HANDLE => "InvalidHandle",
-       LibOGR::ERR_NON_EXISTING_FEATURE => "NonExistingFeature",
+       Lib::ERR_NOT_ENOUGH_DATA => "NotEnoughData",
+       Lib::ERR_NOT_ENOUGH_MEMORY => "NotEnoughMemory",
+       Lib::ERR_UNSUPPORTED_GEOMETRY_TYPE => "UnsupportedGeometryType",
+       Lib::ERR_UNSUPPORTED_OPERATION => "UnsupportedOperation",
+       Lib::ERR_CORRUPT_DATA => "CorruptData",
+       Lib::ERR_FAILURE => "Failure",
+       Lib::ERR_UNSUPPORTED_SRS => "UnsupportedSRS",
+       Lib::ERR_INVALID_HANDLE => "InvalidHandle",
+       Lib::ERR_NON_EXISTING_FEATURE => "NonExistingFeature",
      }
      %}
     {% for key, value in error_map %}
       class {{ value.id }} < BaseError; end
     {% end %}
 
-    protected def self.map_exception(error_no : LibOGR::Err)
+    protected def self.map_exception(error_no : Lib::Err)
       case error_no
       when 0
         return error_no
@@ -43,7 +43,7 @@ module OGR
     end
   {% end %}
 
-  def self.exc_wrap_err(err : LibOGR::Err)
+  def self.exc_wrap_err(err : Lib::Err)
     map_exception(err)
   end
 end
