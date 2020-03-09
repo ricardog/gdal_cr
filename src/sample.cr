@@ -86,7 +86,34 @@ def main()
   feature = OGR::Lib.f_create(layer_defn)
   OGR::Lib.f_set_geometry(feature, multipoint)
   OGR::Lib.l_create_feature(layer, feature)
+  OGR::Lib.f_destroy(feature)
   OGR::Lib.release_data_source(ds)
+
+  # Read a vector file in .shp format
+  driver = OGR::Lib.get_driver_by_name("ESRI Shapefile")
+  ds = CPL.exc_wrap_ptr(GDAL::OGR::Lib.open("data/ssp_regions",
+                                            GDAL::Lib::Access::GaReadOnly,
+                                            pointerof(driver)))
+  layer_count = OGR::Lib.ds_get_layer_count(ds)
+  puts "data/ssp_regions has #{layer_count} layers"
+  layer = CPL.exc_wrap_ptr(OGR::Lib.ds_get_layer(ds, 0))
+  layer_name = String.new(OGR::Lib.l_get_name(layer))
+  # Second argument specifies whether to force a correct count
+  feature_count = OGR::Lib.l_get_feature_count(layer, 0)
+  puts "Layer #{layer_name} has #{feature_count} features"
+
+  (1_i64...feature_count).each do |idx|
+    feature = OGR::Lib.l_get_feature(layer, idx)
+    count = OGR::Lib.f_get_geom_field_count(feature)
+    field_idx = OGR::Lib.f_get_field_index(feature, "name")
+    name = String.new(OGR::Lib.f_get_field_as_string(feature, field_idx))
+    geom_ref = OGR::Lib.f_get_geometry_ref(feature)
+    point = OGR::Lib.g_create_geometry(OGR::Lib::WkbGeometryType::WkbPoint)
+    OGR.exc_wrap_err(OGR::Lib.g_centroid(geom_ref, point))
+    OGR::Lib.g_export_to_wkt(point, out new_point_wkt)
+    wkt_str = String.new(new_point_wkt)
+    puts "centroid of #{name} is at #{wkt_str}"
+  end
   
   # Open dataset
   ds = GDAL::Lib.open("data/raster.tif", GDAL::Lib::Access::GaReadOnly)
