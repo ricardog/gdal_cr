@@ -93,14 +93,15 @@ def main()
   puts ds
 
   # Try to open non-existent dataset
-  #CPL.use_exceptions(true)
+  CPL.silence_failures = true
   begin
     ds = CPL.exc_wrap_ptr(GDAL::Lib.open("data/foo.tif",
                                          GDAL::Lib::Access::GaReadOnly))
   rescue ex : CPL::BaseError
     puts "Error #{ex.error_no}: #{ex.etype.to_s}: #{ex.message}"
   end
-  CPL.use_exceptions(false)
+  CPL.silence_failures = false
+  ds = GDAL::Lib.open("data/foo.tif", GDAL::Lib::Access::GaReadOnly)
 
   # That's it folks!
   puts "done"

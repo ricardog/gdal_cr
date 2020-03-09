@@ -94,14 +94,14 @@ module GDAL::CPL
   end
 
   
-  @@use_exceptions : Bool = false
+  @@silence_failures : Bool = false
   @@prev_error_handler : Lib::ErrorHandler?
 
-  def self.use_exceptions(use_exceptions : Bool)
-    return if use_exceptions == @@use_exceptions
+  def self.silence_failures=(silence_failures : Bool)
+    return if silence_failures == @@silence_failures
     Lib.error_reset()
-    @@use_exceptions = use_exceptions
-    if use_exceptions
+    @@silence_failures = silence_failures
+    if silence_failures
       @@prev_error_handler = Lib.set_error_handler ->(etype, code, msg) {
         if etype == Lib::Err::CeFatal
           prev = @@prev_error_handler.as(Lib::ErrorHandler)
@@ -110,7 +110,7 @@ module GDAL::CPL
           prev = @@prev_error_handler.as(Lib::ErrorHandler)
           prev.call(etype, code, msg)
         else
-          map_exception(code, etype, msg)
+          return
         end
       }
     else
