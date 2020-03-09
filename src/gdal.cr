@@ -1,15 +1,14 @@
 # TODO: Write documentation for `Gdal.cr`
+require "semantic_version"
+
+require "./gdal/*"
 require "lib_gdal"
 
-require "semantic_version"
 
 module GDAL
   VERSION = "0.1.0"
 
   def self.version
-    {% if compare_versions(Lib::VERSION, "2.1.0") >= 0 %}
-      puts "GDAL version (%s) is newer (2.1.0)" % Lib::VERSION
-    {% end %}
     return SemanticVersion.parse(String.new(
                                   Lib.version_info("RELEASE_NAME")))
   end

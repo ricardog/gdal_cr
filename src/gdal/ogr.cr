@@ -2,8 +2,7 @@ require "base64"
 
 require "lib_ogr"
 
-module OGR
-  VERSION ="0.1.0"
+module GDAL::OGR
 
   class BaseError < Exception
     getter error_no : Int32

@@ -1,8 +1,7 @@
 
 require "lib_cpl"
 
-module CPL
-  VERSION = "0.1.0"
+module GDAL::CPL
 
   class BaseError < Exception
     getter error_no : Int32

@@ -1,12 +1,13 @@
 
-require "./cpl"
 require "./gdal"
-require "./ogr"
+
+include GDAL
 
 def main()      
   # TODO: Put your code here
   GDAL.all_register()
   puts GDAL.version
+  puts GDAL.release_name
   puts String.new(GDAL::Lib.version_info("VERSION_NUM"))
 
   # Create a Point
