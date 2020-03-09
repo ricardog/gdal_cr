@@ -9,12 +9,12 @@ module GDAL
   VERSION = "0.1.0"
 
   def self.version
-    return SemanticVersion.parse(String.new(
-                                  Lib.version_info("RELEASE_NAME")))
+    return SemanticVersion.new(Lib::VERSION_MAJOR, Lib::VERSION_MINOR,
+                               Lib::VERSION_REV)
   end
 
-  def self.release_name
-    return String.new(Lib.version_info("RELEASE_NAME"))
+  def self.datadir
+    return Lib::DATADIR
   end
 
   def self.all_register

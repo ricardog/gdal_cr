@@ -6,9 +6,15 @@ include GDAL
 def main()      
   # TODO: Put your code here
   GDAL.all_register()
-  puts GDAL.version
-  puts GDAL.release_name
+  puts "version: #{GDAL.version}"
+  puts "datadir: #{GDAL.datadir}"
   puts String.new(GDAL::Lib.version_info("VERSION_NUM"))
+
+  # Print a list of supported formats
+  puts "Supported formats:"
+  GDAL::Lib::FORMATS.each do |fmt|
+    puts "  #{fmt}"
+  end
 
   # Create a Point
   point = OGR::Lib.g_create_geometry(OGR::Lib::WkbGeometryType::WkbPoint)
@@ -91,17 +97,10 @@ def main()
   begin
     ds = CPL.exc_wrap_ptr(GDAL::Lib.open("data/foo.tif",
                                          GDAL::Lib::Access::GaReadOnly))
-    #ds = try_open("data/foo.tif", GDAL::Lib::Access::GaReadOnly)
   rescue ex : CPL::BaseError
     puts "Error #{ex.error_no}: #{ex.etype.to_s}: #{ex.message}"
   end
   CPL.use_exceptions(false)
-
-  # Print a list of supported formats
-  puts "Supported formats:"
-  GDAL::Lib::FORMATS.each do |fmt|
-    puts "  #{fmt}"
-  end
 
   # That's it folks!
   puts "done"
