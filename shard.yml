@@ -2,7 +2,7 @@ name: gdal.cr
 version: 0.1.0
 
 authors:
-  - your-name-here <your-email-here>
+  - Ricardo E. Gonzalez <ricardog@ricardog.com>
 
 crystal: 0.33.0
 
