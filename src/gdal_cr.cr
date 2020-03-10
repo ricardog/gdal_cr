@@ -20,8 +20,6 @@
 require "semantic_version"
 
 require "./gdal/*"
-require "lib_gdal"
-
 
 module GDAL
   VERSION = "0.1.0"

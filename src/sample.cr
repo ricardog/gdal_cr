@@ -1,5 +1,5 @@
 
-require "./gdal"
+require "./gdal_cr"
 
 include GDAL
 

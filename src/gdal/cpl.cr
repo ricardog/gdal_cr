@@ -1,5 +1,5 @@
 
-require "lib_cpl"
+require "./lib_cpl"
 
 module GDAL::CPL
 

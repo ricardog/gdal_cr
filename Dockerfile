@@ -9,15 +9,15 @@ RUN apt-get install -y gdal-bin gdal-data libgdal-dev \
 	&& adduser gdal sudo
 
 USER gdal
-WORKDIR /home/gdal
 
-RUN git clone https://github.com/crystal-lang/crystal_lib.git \
+RUN cd /home/gdal \
+	&& git clone https://github.com/crystal-lang/crystal_lib.git \
 	&& cd crystal_lib \
 	&& shards install \
 	&& crystal build --release src/main.cr \
 	&& mv main crystal_lib \
-	&& mkdir -p /home/gdal/work \
-	&& chown gdal:gdal /home/gdal/work
+	&& mkdir -p /home/gdal/gdal_cr \
+	&& chown gdal:gdal /home/gdal/gdal_cr
+WORKDIR /home/gdal/gdal_cr
 
-COPY --chown=gdal:gdal host/sleeper.py /home/gdal/work/sleeper.py
-CMD ./work/sleeper.py
+CMD crystal play -p 8080 -b 0.0.0.0

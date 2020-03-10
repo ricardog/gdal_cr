@@ -1,4 +1,4 @@
-require "lib_ogr"
+require "./lib_ogr"
 
 module GDAL::OGR
 
