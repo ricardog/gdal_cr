@@ -62,6 +62,19 @@ def main()
   puts String.new(geo4_wkt)
   CPL::Lib.free(geo4_wkt)
 
+  # Create a spatial reference from wkt
+  wkt = %(GEOGCS["WGS 84",DATUM["WGS_1984",
+  SPHEROID["WGS 84",6378137,298.257223563,
+  AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],
+  PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],
+  UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],
+  AUTHORITY["EPSG","4326"]])
+  srs = uninitialized OSR::Lib::OgrSpatialReferenceH
+  srs = OSR::Lib.new_spatial_reference(wkt)
+  OSR::Lib.export_to_wkt(srs, out srs_wkt)
+  puts String.new(srs_wkt)
+  CPL::Lib.free(srs_wkt)
+  
   # Write geometry to dataset
   wkt = "MULTIPOINT (1181866.263593049 615654.4222507705, " \
         "1205917.1207499576 623979.7189589312, " \
@@ -70,8 +83,8 @@ def main()
   wkt_ptr2 = wkt.to_unsafe
   OGR.exc_wrap_err \
         OGR::Lib.g_create_from_wkt(pointerof(wkt_ptr2),
-                                 Pointer(OGR::Lib::SpatialReferenceH).null,
-                                 out multipoint)
+                                   Pointer(OGR::Lib::SpatialReferenceH).null,
+                                   out multipoint)
   OGR::Lib.g_export_to_wkt(multipoint, out multipoint_wkt)
   puts String.new(multipoint_wkt)
   CPL::Lib.free(multipoint_wkt)

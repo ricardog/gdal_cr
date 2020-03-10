@@ -1,6 +1,6 @@
 module GDAL::OSR
   @[Link("gdal")]
-  lib LibOSR
+  lib Lib
     fun axis_enum_to_name = OSRAxisEnumToName(e_orientation : OgrAxisOrientation) : LibC::Char*
     enum OgrAxisOrientation
       OaoOther = 0
