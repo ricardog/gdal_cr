@@ -1,9 +1,10 @@
 /docs/
-/lib/
+#/lib/
 /bin/
 /.shards/
 *.dwarf
 .vagrant
+test.geojson
 
 # Libraries don't need dependency lock
 # Dependencies will be locked in applications that use them
