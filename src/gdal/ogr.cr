@@ -1,5 +1,3 @@
-require "base64"
-
 require "lib_ogr"
 
 module GDAL::OGR
