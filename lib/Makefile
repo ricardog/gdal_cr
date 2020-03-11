@@ -1,5 +1,5 @@
 
-TARGETS := lib_gdal.cr lib_ogr.cr lib_osr.cr lib_cpl.cr
+TARGETS := $(addprefix ../src/gdal/, lib_gdal.cr lib_ogr.cr lib_osr.cr lib_cpl.cr)
 
 all: ${TARGETS}
 
