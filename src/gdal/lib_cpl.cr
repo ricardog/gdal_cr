@@ -1,4 +1,3 @@
-
 module GDAL::CPL
   @[Link(ldflags: "`gdal-config --libs`")]
   lib Lib
@@ -27,6 +26,18 @@ module GDAL::CPL
     E_AWSACCESSDENIED = 14
     E_AWSINVALIDCREDENTIALS = 15
     E_AWSSIGNATUREDOESNOTMATCH = 16
+    T_HONOURSTRINGS = 1
+    T_ALLOWEMPTYTOKENS = 2
+    T_PRESERVEQUOTES = 4
+    T_PRESERVEESCAPES = 8
+    T_STRIPLEADSPACES = 16
+    T_STRIPENDSPACES = 32
+    ES_BACKSLASHQUOTABLE = 0
+    ES_XML = 1
+    ES_URL = 2
+    ES_SQL = 3
+    ES_CSV = 4
+    ES_XML_BUT_QUOTES = 5
     fun f_open = VSIFOpen(x0 : LibC::Char*, x1 : LibC::Char*) : File*
     struct X_IoFile
       _flags : LibC::Int
@@ -353,5 +364,72 @@ module GDAL::CPL
     fun validate_xml = CPLValidateXML(psz_xml_filename : LibC::Char*, psz_xsd_filename : LibC::Char*, papsz_options : LibC::Char**) : LibC::Int
     fun setlocale = CPLsetlocale(category : LibC::Int, locale : LibC::Char*) : LibC::Char*
     fun cleanup_setlocale_mutex = CPLCleanupSetlocaleMutex
+    fun add_string = CSLAddString(papsz_str_list : LibC::Char**, psz_new_string : LibC::Char*) : LibC::Char**
+    fun add_string_may_fail = CSLAddStringMayFail(papsz_str_list : LibC::Char**, psz_new_string : LibC::Char*) : LibC::Char**
+    fun count = CSLCount(papsz_str_list : LibC::Char**) : LibC::Int
+    fun get_field = CSLGetField(x0 : LibC::Char**, x1 : LibC::Int) : LibC::Char*
+    fun destroy = CSLDestroy(papsz_str_list : LibC::Char**)
+    fun duplicate = CSLDuplicate(papsz_str_list : LibC::Char**) : LibC::Char**
+    fun merge = CSLMerge(papsz_orig : LibC::Char**, papsz_override : LibC::Char**) : LibC::Char**
+    fun tokenize_string = CSLTokenizeString(psz_string : LibC::Char*) : LibC::Char**
+    fun tokenize_string_complex = CSLTokenizeStringComplex(psz_string : LibC::Char*, psz_delimiter : LibC::Char*, b_honour_strings : LibC::Int, b_allow_empty_tokens : LibC::Int) : LibC::Char**
+    fun tokenize_string2 = CSLTokenizeString2(psz_string : LibC::Char*, psz_delimiter : LibC::Char*, n_cslt_flags : LibC::Int) : LibC::Char**
+    fun print = CSLPrint(papsz_str_list : LibC::Char**, fp_out : File*) : LibC::Int
+    fun load = CSLLoad(psz_fname : LibC::Char*) : LibC::Char**
+    fun load2 = CSLLoad2(psz_fname : LibC::Char*, n_max_lines : LibC::Int, n_max_cols : LibC::Int, papsz_options : LibC::Char**) : LibC::Char**
+    fun save = CSLSave(papsz_str_list : LibC::Char**, psz_fname : LibC::Char*) : LibC::Int
+    fun insert_strings = CSLInsertStrings(papsz_str_list : LibC::Char**, n_insert_at_line_no : LibC::Int, papsz_new_lines : LibC::Char**) : LibC::Char**
+    fun insert_string = CSLInsertString(papsz_str_list : LibC::Char**, n_insert_at_line_no : LibC::Int, psz_new_line : LibC::Char*) : LibC::Char**
+    fun remove_strings = CSLRemoveStrings(papsz_str_list : LibC::Char**, n_first_line_to_delete : LibC::Int, n_num_to_remove : LibC::Int, ppapsz_ret_strings : LibC::Char***) : LibC::Char**
+    fun find_string = CSLFindString(papsz_list : LibC::Char**, psz_target : LibC::Char*) : LibC::Int
+    fun find_string_case_sensitive = CSLFindStringCaseSensitive(papsz_list : LibC::Char**, psz_target : LibC::Char*) : LibC::Int
+    fun partial_find_string = CSLPartialFindString(papsz_haystack : LibC::Char**, psz_needle : LibC::Char*) : LibC::Int
+    fun find_name = CSLFindName(papsz_str_list : LibC::Char**, psz_name : LibC::Char*) : LibC::Int
+    fun fetch_boolean = CSLFetchBoolean(papsz_str_list : LibC::Char**, psz_key : LibC::Char*, b_default : LibC::Int) : LibC::Int
+    fun test_boolean = CSLTestBoolean(psz_value : LibC::Char*) : LibC::Int
+    fun test_boolean = CPLTestBoolean(psz_value : LibC::Char*) : LibC::Int
+    fun parse_name_value = CPLParseNameValue(psz_name_value : LibC::Char*, ppsz_key : LibC::Char**) : LibC::Char*
+    fun fetch_name_value = CSLFetchNameValue(papsz_str_list : LibC::Char**, psz_name : LibC::Char*) : LibC::Char*
+    fun fetch_name_value_def = CSLFetchNameValueDef(papsz_str_list : LibC::Char**, psz_name : LibC::Char*, psz_default : LibC::Char*) : LibC::Char*
+    fun fetch_name_value_multiple = CSLFetchNameValueMultiple(papsz_str_list : LibC::Char**, psz_name : LibC::Char*) : LibC::Char**
+    fun add_name_value = CSLAddNameValue(papsz_str_list : LibC::Char**, psz_name : LibC::Char*, psz_value : LibC::Char*) : LibC::Char**
+    fun set_name_value = CSLSetNameValue(papsz_str_list : LibC::Char**, psz_name : LibC::Char*, psz_value : LibC::Char*) : LibC::Char**
+    fun set_name_value_separator = CSLSetNameValueSeparator(papsz_str_list : LibC::Char**, psz_separator : LibC::Char*)
+    fun parse_command_line = CSLParseCommandLine(psz_command_line : LibC::Char*) : LibC::Char**
+    fun escape_string = CPLEscapeString(psz_string : LibC::Char*, n_length : LibC::Int, n_scheme : LibC::Int) : LibC::Char*
+    fun unescape_string = CPLUnescapeString(psz_string : LibC::Char*, pn_length : LibC::Int*, n_scheme : LibC::Int) : LibC::Char*
+    fun binary_to_hex = CPLBinaryToHex(n_bytes : LibC::Int, paby_data : GByte*) : LibC::Char*
+    fun hex_to_binary = CPLHexToBinary(psz_hex : LibC::Char*, pn_bytes : LibC::Int*) : GByte*
+    fun base64_encode = CPLBase64Encode(n_bytes : LibC::Int, paby_data : GByte*) : LibC::Char*
+    fun base64_decode_in_place = CPLBase64DecodeInPlace(psz_base64 : GByte*) : LibC::Int
+    ValueString = 0_i64
+    ValueReal = 1_i64
+    ValueInteger = 2_i64
+    fun get_value_type = CPLGetValueType(psz_value : LibC::Char*) : ValueType
+    enum ValueType
+      ValueString = 0
+      ValueReal = 1
+      ValueInteger = 2
+    end
+    fun strlcpy = CPLStrlcpy(psz_dest : LibC::Char*, psz_src : LibC::Char*, n_dest_size : LibC::SizeT) : LibC::SizeT
+    fun strlcat = CPLStrlcat(psz_dest : LibC::Char*, psz_src : LibC::Char*, n_dest_size : LibC::SizeT) : LibC::SizeT
+    fun strnlen = CPLStrnlen(psz_str : LibC::Char*, n_max_len : LibC::SizeT) : LibC::SizeT
+    fun vsnprintf = CPLvsnprintf(str : LibC::Char*, size : LibC::SizeT, fmt : LibC::Char*, args : VaList) : LibC::Int
+    fun snprintf = CPLsnprintf(str : LibC::Char*, size : LibC::SizeT, fmt : LibC::Char*, ...) : LibC::Int
+    fun sprintf = CPLsprintf(str : LibC::Char*, fmt : LibC::Char*, ...) : LibC::Int
+    fun printf = CPLprintf(fmt : LibC::Char*, ...) : LibC::Int
+    fun sscanf = CPLsscanf(str : LibC::Char*, fmt : LibC::Char*, ...) : LibC::Int
+    fun s_printf = CPLSPrintf(fmt : LibC::Char*, ...) : LibC::Char*
+    fun append_printf = CSLAppendPrintf(papsz_str_list : LibC::Char**, fmt : LibC::Char*, ...) : LibC::Char**
+    fun vas_printf = CPLVASPrintf(buf : LibC::Char**, fmt : LibC::Char*, args : VaList) : LibC::Int
+    fun encoding_char_size = CPLEncodingCharSize(psz_encoding : LibC::Char*) : LibC::Int
+    fun clear_recode_warning_flags = CPLClearRecodeWarningFlags
+    fun recode = CPLRecode(psz_source : LibC::Char*, psz_src_encoding : LibC::Char*, psz_dst_encoding : LibC::Char*) : LibC::Char*
+    fun recode_from_w_char = CPLRecodeFromWChar(pwsz_source : WcharT*, psz_src_encoding : LibC::Char*, psz_dst_encoding : LibC::Char*) : LibC::Char*
+    alias WcharT = LibC::Int
+    fun recode_to_w_char = CPLRecodeToWChar(psz_source : LibC::Char*, psz_src_encoding : LibC::Char*, psz_dst_encoding : LibC::Char*) : WcharT*
+    fun is_utf8 = CPLIsUTF8(paby_data : LibC::Char*, n_len : LibC::Int) : LibC::Int
+    fun force_to_ascii = CPLForceToASCII(paby_data : LibC::Char*, n_len : LibC::Int, ch_replacement_char : LibC::Char) : LibC::Char*
+    fun strlen_utf8 = CPLStrlenUTF8(psz_utf8_str : LibC::Char*) : LibC::Int
   end
 end
